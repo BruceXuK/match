@@ -1,0 +1,15 @@
+FROM openjdk:8-jre
+
+MAINTAINER match 282352086@qq.com
+
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+RUN mkdir -p /match/modules/email
+
+WORKDIR /match/modules/email
+
+EXPOSE 9003
+
+ADD ./jar/match-email.jar ./app.jar
+
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]

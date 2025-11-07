@@ -1,0 +1,35 @@
+# Tomcat
+server:
+  port: 9301
+
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: match-file
+  profiles:
+    # 环境配置
+    active: dev
+  servlet:
+    multipart:
+      # 单个文件大小限制
+      max-file-size: 10MB
+      # 总上传文件大小限制
+      max-request-size: 100MB
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+      config:
+        # 配置中心地址
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+        # 配置文件格式
+        file-extension: yml
+        # 共享配置
+        shared-configs:
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}

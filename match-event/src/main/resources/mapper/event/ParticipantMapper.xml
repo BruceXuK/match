@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.match.event.mapper.ParticipantMapper">
+
+    <resultMap type="Participant" id="ParticipantResult">
+        <result property="id" column="id"/>
+        <result property="registrationId" column="registration_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="emergencyContact" column="emergency_contact"/>
+        <result property="emergencyPhone" column="emergency_phone"/>
+        <result property="photo" column="photo"/>
+        <result property="idCard" column="id_card"/>
+        <result property="address" column="address"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectParticipantVo">
+        select id, registration_id, user_id, emergency_contact, emergency_phone, photo, id_card, address, create_by, create_time, update_by, update_time, remark from participant
+    </sql>
+
+    <select id="selectParticipantById" parameterType="Long" resultMap="ParticipantResult">
+        <include refid="selectParticipantVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectParticipantList" parameterType="Participant" resultMap="ParticipantResult">
+        <include refid="selectParticipantVo"/>
+        <where>
+            <if test="registrationId != null ">and registration_id = #{registrationId}</if>
+            <if test="userId != null ">and user_id = #{userId}</if>
+            <if test="emergencyContact != null  and emergencyContact != ''">and emergency_contact = #{emergencyContact}</if>
+            <if test="emergencyPhone != null  and emergencyPhone != ''">and emergency_phone = #{emergencyPhone}</if>
+            <if test="idCard != null  and idCard != ''">and id_card = #{idCard}</if>
+            <if test="address != null  and address != ''">and address = #{address}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectParticipantByRegistrationId" parameterType="Long" resultMap="ParticipantResult">
+        <include refid="selectParticipantVo"/>
+        where registration_id = #{registrationId}
+    </select>
+
+    <insert id="insertParticipant" parameterType="Participant" useGeneratedKeys="true" keyProperty="id">
+        insert into participant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="registrationId != null">registration_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="emergencyContact != null and emergencyContact != ''">emergency_contact,</if>
+            <if test="emergencyPhone != null and emergencyPhone != ''">emergency_phone,</if>
+            <if test="photo != null and photo != ''">photo,</if>
+            <if test="idCard != null and idCard != ''">id_card,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="registrationId != null">#{registrationId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="emergencyContact != null and emergencyContact != ''">#{emergencyContact},</if>
+            <if test="emergencyPhone != null and emergencyPhone != ''">#{emergencyPhone},</if>
+            <if test="photo != null and photo != ''">#{photo},</if>
+            <if test="idCard != null and idCard != ''">#{idCard},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="updateParticipant" parameterType="Participant">
+        update participant
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="registrationId != null">registration_id = #{registrationId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="emergencyContact != null and emergencyContact != ''">emergency_contact = #{emergencyContact},</if>
+            <if test="emergencyPhone != null and emergencyPhone != ''">emergency_phone = #{emergencyPhone},</if>
+            <if test="photo != null and photo != ''">photo = #{photo},</if>
+            <if test="idCard != null and idCard != ''">id_card = #{idCard},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteParticipantById" parameterType="Long">
+        delete from participant where id = #{id}
+    </delete>
+
+    <delete id="deleteParticipantByIds" parameterType="String">
+        delete from participant where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

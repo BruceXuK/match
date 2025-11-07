@@ -1,0 +1,154 @@
+version : '3.8'
+services:
+  match-nacos:
+    container_name: match-nacos
+    image: nacos/nacos-server
+    build:
+      context: ./nacos
+    environment:
+      - MODE=standalone
+    volumes:
+      - ./nacos/logs/:/home/nacos/logs
+      - ./nacos/conf/application.properties:/home/nacos/conf/application.properties
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+    depends_on:
+      - match-mysql
+  match-mysql:
+    container_name: match-mysql
+    image: mysql:5.7
+    build:
+      context: ./mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/conf:/etc/mysql/conf.d
+      - ./mysql/logs:/logs
+      - ./mysql/data:/var/lib/mysql
+    command: [
+          'mysqld',
+          '--innodb-buffer-pool-size=80M',
+          '--character-set-server=utf8mb4',
+          '--collation-server=utf8mb4_unicode_ci',
+          '--default-time-zone=+8:00',
+          '--lower-case-table-names=1'
+        ]
+    environment:
+      MYSQL_DATABASE: 'ry-cloud'
+      MYSQL_ROOT_PASSWORD: password
+  match-redis:
+    container_name: match-redis
+    image: redis
+    build:
+      context: ./redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/conf/redis.conf:/home/match/redis/redis.conf
+      - ./redis/data:/data
+    command: redis-server /home/match/redis/redis.conf
+  match-nginx:
+    container_name: match-nginx
+    image: nginx
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/html/dist:/home/match/projects/match-ui
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/logs:/var/log/nginx
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - match-gateway
+    links:
+      - match-gateway
+  match-gateway:
+    container_name: match-gateway
+    build:
+      context: ./match/gateway
+      dockerfile: dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - match-redis
+    links:
+      - match-redis
+  match-auth:
+    container_name: match-auth
+    build:
+      context: ./match/auth
+      dockerfile: dockerfile
+    ports:
+      - "9200:9200"
+    depends_on:
+      - match-redis
+    links:
+      - match-redis
+  match-modules-system:
+    container_name: match-modules-system
+    build:
+      context: ./match/modules/system
+      dockerfile: dockerfile
+    ports:
+      - "9201:9201"
+    depends_on:
+      - match-redis
+      - match-mysql
+    links:
+      - match-redis
+      - match-mysql
+  match-modules-gen:
+    container_name: match-modules-gen
+    build:
+      context: ./match/modules/gen
+      dockerfile: dockerfile
+    ports:
+      - "9202:9202"
+    depends_on:
+      - match-mysql
+    links:
+      - match-mysql
+  match-modules-job:
+    container_name: match-modules-job
+    build:
+      context: ./match/modules/job
+      dockerfile: dockerfile
+    ports:
+      - "9203:9203"
+    depends_on:
+      - match-mysql
+    links:
+      - match-mysql
+  match-modules-file:
+    container_name: match-modules-file
+    build:
+      context: ./match/modules/file
+      dockerfile: dockerfile
+    ports:
+      - "9300:9300"
+    volumes:
+    - ./match/uploadPath:/home/match/uploadPath
+  match-visual-monitor:
+    container_name: match-visual-monitor
+    build:
+      context: ./match/visual/monitor
+      dockerfile: dockerfile
+    ports:
+      - "9100:9100"
+
+  match-modules-email:
+    container_name: match-modules-email
+    build:
+      context: ./match/modules/email
+      dockerfile: dockerfile
+    ports:
+      - "9204:9204"
+    depends_on:
+      - match-redis
+      - match-mysql
+    links:
+      - match-redis
+      - match-mysql

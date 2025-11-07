@@ -1,0 +1,3 @@
+com.match.system.api.factory.RemoteUserFallbackFactory
+com.match.system.api.factory.RemoteLogFallbackFactory
+com.match.system.api.factory.RemoteFileFallbackFactory

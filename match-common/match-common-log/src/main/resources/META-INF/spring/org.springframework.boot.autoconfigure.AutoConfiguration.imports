@@ -1,0 +1,2 @@
+com.match.common.log.service.AsyncLogService
+com.match.common.log.aspect.LogAspect

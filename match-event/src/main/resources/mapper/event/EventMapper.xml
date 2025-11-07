@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.match.event.mapper.EventMapper">
+
+    <resultMap type="MarathonEvent" id="EventResult">
+        <result property="id" column="id"/>
+        <result property="eventName" column="event_name"/>
+        <result property="eventDescription" column="event_description"/>
+        <result property="eventTime" column="event_time"/>
+        <result property="registrationStartTime" column="registration_start_time"/>
+        <result property="registrationEndTime" column="registration_end_time"/>
+        <result property="maxParticipants" column="max_participants"/>
+        <result property="currentParticipants" column="current_participants"/>
+        <result property="status" column="status"/>
+        <result property="eventPhoto" column="event_photo"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectEventVo">
+        select id, event_name, event_description, event_time, registration_start_time, registration_end_time, max_participants, current_participants, status, event_photo, create_by, create_time, update_by, update_time, remark from marathon_event
+    </sql>
+
+    <select id="selectEventById" parameterType="Long" resultMap="EventResult">
+        <include refid="selectEventVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectEventList" parameterType="MarathonEvent" resultMap="EventResult">
+        <include refid="selectEventVo"/>
+        <where>
+            <if test="eventName != null  and eventName != ''">and event_name like concat('%', #{eventName}, '%')</if>
+            <if test="eventTime != null  and eventTime != ''">and event_time = #{eventTime}</if>
+            <if test="registrationStartTime != null  and registrationStartTime != ''">and registration_start_time = #{registrationStartTime}</if>
+            <if test="registrationEndTime != null  and registrationEndTime != ''">and registration_end_time = #{registrationEndTime}</if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <insert id="insertEvent" parameterType="MarathonEvent" useGeneratedKeys="true" keyProperty="id">
+        insert into marathon_event
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eventName != null and eventName != ''">event_name,</if>
+            <if test="eventDescription != null and eventDescription != ''">event_description,</if>
+            <if test="eventTime != null and eventTime != ''">event_time,</if>
+            <if test="registrationStartTime != null and registrationStartTime != ''">registration_start_time,</if>
+            <if test="registrationEndTime != null and registrationEndTime != ''">registration_end_time,</if>
+            <if test="maxParticipants != null">max_participants,</if>
+            <if test="currentParticipants != null">current_participants,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="eventPhoto != null and eventPhoto != ''">event_photo,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eventName != null and eventName != ''">#{eventName},</if>
+            <if test="eventDescription != null and eventDescription != ''">#{eventDescription},</if>
+            <if test="eventTime != null and eventTime != ''">#{eventTime},</if>
+            <if test="registrationStartTime != null and registrationStartTime != ''">#{registrationStartTime},</if>
+            <if test="registrationEndTime != null and registrationEndTime != ''">#{registrationEndTime},</if>
+            <if test="maxParticipants != null">#{maxParticipants},</if>
+            <if test="currentParticipants != null">#{currentParticipants},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="eventPhoto != null and eventPhoto != ''">#{eventPhoto},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="updateEvent" parameterType="MarathonEvent">
+        update marathon_event
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventName != null and eventName != ''">event_name = #{eventName},</if>
+            <if test="eventDescription != null and eventDescription != ''">event_description = #{eventDescription},</if>
+            <if test="eventTime != null and eventTime != ''">event_time = #{eventTime},</if>
+            <if test="registrationStartTime != null and registrationStartTime != ''">registration_start_time = #{registrationStartTime},</if>
+            <if test="registrationEndTime != null and registrationEndTime != ''">registration_end_time = #{registrationEndTime},</if>
+            <if test="maxParticipants != null">max_participants = #{maxParticipants},</if>
+            <if test="currentParticipants != null">current_participants = #{currentParticipants},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="eventPhoto != null and eventPhoto != ''">event_photo = #{eventPhoto},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEventById" parameterType="Long">
+        delete from marathon_event where id = #{id}
+    </delete>
+
+    <delete id="deleteEventByIds" parameterType="String">
+        delete from marathon_event where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,70 @@
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: match-email
+  profiles:
+    # 环境配置
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+      config:
+        # 配置中心地址
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+        # 配置文件格式
+        file-extension: yml
+        # 共享配置
+        shared-configs:
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+  datasource:
+    dynamic:
+      primary: master #设置默认的数据源或者数据源组,默认值即为master
+      strict: false #设置严格模式,默认false不启动. 启动后在未匹配到指定数据源时候会抛出异常,不启动则使用默认数据源.
+      datasource:
+        master:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://127.0.0.1:3306/match-cloud?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+          username: root
+          password: password
+  mail:
+    # 邮件服务器主机
+    host: ${MAIL_HOST:smtp.163.com}
+    # 邮件服务器端口
+    port: ${MAIL_PORT:25}
+    # 邮箱用户名
+    username: ${MAIL_USERNAME:brucexuu20251020@163.com}
+    # 邮箱密码
+    password: ${MAIL_PASSWORD:VMS6VhXKifzdMjZr}
+    # 邮件属性配置
+    properties:
+      mail:
+        smtp:
+          # SMTP认证
+          auth: true
+          # STARTTLS加密
+          starttls:
+            enable: true
+
+# MyBatis配置
+mybatis:
+  # 搜索指定包别名
+  typeAliasesPackage: com.match.email.domain
+  # 配置mapper的扫描路径
+  mapperLocations: classpath:mapper/**/*.xml
+  # 加载全局的配置文件
+  configLocation: classpath:mybatis-config.xml
+
+# PageHelper分页插件
+pagehelper:
+  helperDialect: mysql
+  supportMethodsArguments: true
+  params: count=countSql
+
+

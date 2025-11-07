@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.match</groupId>
+        <artifactId>match</artifactId>
+        <version>3.6.6</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <modules>
+        <module>match-common-log</module>
+        <module>match-common-core</module>
+        <module>match-common-redis</module>
+        <module>match-common-seata</module>
+        <module>match-common-swagger</module>
+        <module>match-common-security</module>
+        <module>match-common-sensitive</module>
+        <module>match-common-datascope</module>
+        <module>match-common-datasource</module>
+        <module>match-common-oss</module>
+        <module>match-common-json</module>
+    </modules>
+
+    <artifactId>match-common</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        match-common通用模块
+    </description>
+
+</project>
