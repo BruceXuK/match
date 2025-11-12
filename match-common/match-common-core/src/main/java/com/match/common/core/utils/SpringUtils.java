@@ -1,11 +1,15 @@
 package com.match.common.core.utils;
 
+import cn.hutool.extra.spring.SpringUtil;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import static cn.hutool.extra.spring.SpringUtil.getApplicationContext;
 
 /**
  * spring工具类 方便在非spring管理环境中获取bean
@@ -18,6 +22,12 @@ public final class SpringUtils implements BeanFactoryPostProcessor
     /** Spring应用上下文环境 */
     private static ConfigurableListableBeanFactory beanFactory;
 
+    /**
+     * 获取spring上下文
+     */
+    public static ApplicationContext context() {
+        return getApplicationContext();
+    }
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException
     {
@@ -111,4 +121,6 @@ public final class SpringUtils implements BeanFactoryPostProcessor
     {
         return (T) AopContext.currentProxy();
     }
+
+
 }

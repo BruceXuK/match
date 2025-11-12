@@ -1,5 +1,6 @@
-package com.match.file.service;
+package com.match.file.service.impl;
 
+import com.match.file.service.ISysFileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,8 @@
-package com.match.file.service;
+package com.match.file.service.impl;
 
 import java.io.InputStream;
+
+import com.match.file.service.ISysFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -56,7 +58,7 @@ public class FastDfsSysFileServiceImpl implements ISysFileService
 
     /**
      * FastDFS文件删除接口
-     * 
+     *
      * @param fileUrl 文件访问URL
      * @throws Exception
      */

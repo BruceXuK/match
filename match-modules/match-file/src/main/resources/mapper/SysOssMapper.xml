@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.match.file.mapper.SysOssMapper">
+
+    <resultMap type="SysOss" id="SysOssResult">
+        <id     property="ossId"         column="oss_id"         />
+        <result property="fileName"      column="file_name"      />
+        <result property="originalName"  column="original_name"  />
+        <result property="fileSuffix"    column="file_suffix"    />
+        <result property="url"           column="url"            />
+        <result property="createBy"      column="create_by"      />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"      column="update_by"      />
+        <result property="updateTime"    column="update_time"    />
+        <result property="service"       column="service"        />
+        <result property="md5"           column="md5"            />
+        <result property="uploadId"      column="upload_id"      />
+        <result property="uploadStatus"  column="upload_status"  />
+    </resultMap>
+
+    <sql id="selectSysOssVo">
+        select oss_id, file_name, original_name, file_suffix, url, create_by, create_time, update_by, update_time, service, md5, upload_id, upload_status
+        from sys_oss
+    </sql>
+
+    <select id="selectSysOssById" parameterType="Long" resultMap="SysOssResult">
+        <include refid="selectSysOssVo"/>
+        where oss_id = #{ossId}
+    </select>
+
+    <select id="selectSysOssList" parameterType="SysOss" resultMap="SysOssResult">
+        <include refid="selectSysOssVo"/>
+        <where>
+            <if test="fileName != null and fileName != ''">
+                and file_name like concat('%', #{fileName}, '%')
+            </if>
+            <if test="originalName != null and originalName != ''">
+                and original_name like concat('%', #{originalName}, '%')
+            </if>
+            <if test="fileSuffix != null and fileSuffix != ''">
+                and file_suffix = #{fileSuffix}
+            </if>
+            <if test="service != null and service != ''">
+                and service = #{service}
+            </if>
+            <if test="uploadStatus != null and uploadStatus != ''">
+                and upload_status = #{uploadStatus}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <insert id="insertSysOss" parameterType="SysOss" useGeneratedKeys="true" keyProperty="ossId">
+        insert into sys_oss(
+        <if test="fileName != null and fileName != ''">file_name,</if>
+        <if test="originalName != null and originalName != ''">original_name,</if>
+        <if test="fileSuffix != null and fileSuffix != ''">file_suffix,</if>
+        <if test="url != null and url != ''">url,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        <if test="createTime != null">create_time,</if>
+        <if test="updateBy != null and updateBy != ''">update_by,</if>
+        <if test="updateTime != null">update_time,</if>
+        <if test="service != null and service != ''">service,</if>
+        <if test="md5 != null and md5 != ''">md5,</if>
+        <if test="uploadId != null and uploadId != ''">upload_id,</if>
+        <if test="uploadStatus != null and uploadStatus != ''">upload_status</if>
+        )
+        values(
+        <if test="fileName != null and fileName != ''">#{fileName},</if>
+        <if test="originalName != null and originalName != ''">#{originalName},</if>
+        <if test="fileSuffix != null and fileSuffix != ''">#{fileSuffix},</if>
+        <if test="url != null and url != ''">#{url},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="createTime != null">#{createTime},</if>
+        <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+        <if test="updateTime != null">#{updateTime},</if>
+        <if test="service != null and service != ''">#{service},</if>
+        <if test="md5 != null and md5 != ''">#{md5},</if>
+        <if test="uploadId != null and uploadId != ''">#{uploadId},</if>
+        <if test="uploadStatus != null and uploadStatus != ''">#{uploadStatus}</if>
+        )
+    </insert>
+
+    <update id="updateSysOss" parameterType="SysOss">
+        update sys_oss
+        <set>
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="originalName != null and originalName != ''">original_name = #{originalName},</if>
+            <if test="fileSuffix != null and fileSuffix != ''">file_suffix = #{fileSuffix},</if>
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="service != null and service != ''">service = #{service},</if>
+            <if test="md5 != null and md5 != ''">md5 = #{md5},</if>
+            <if test="uploadId != null and uploadId != ''">upload_id = #{uploadId},</if>
+            <if test="uploadStatus != null and uploadStatus != ''">upload_status = #{uploadStatus},</if>
+        </set>
+        where oss_id = #{ossId}
+    </update>
+
+    <delete id="deleteSysOssById" parameterType="Long">
+        delete from sys_oss where oss_id = #{ossId}
+    </delete>
+
+    <delete id="deleteSysOssByIds" parameterType="Long">
+        delete from sys_oss where oss_id in
+        <foreach collection="array" item="ossId" open="(" separator="," close=")">
+            #{ossId}
+        </foreach>
+    </delete>
+
+</mapper>

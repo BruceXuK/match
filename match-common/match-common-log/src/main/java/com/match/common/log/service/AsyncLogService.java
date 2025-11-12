@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import com.match.common.core.constant.SecurityConstants;
 import com.match.system.api.RemoteLogService;
 import com.match.system.api.domain.SysOperLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 异步调用日志服务
@@ -15,7 +17,9 @@ import com.match.system.api.domain.SysOperLog;
 @Service
 public class AsyncLogService
 {
-    @Autowired
+    private static final Logger log = LoggerFactory.getLogger(AsyncLogService.class);
+    
+    @Autowired(required = false)
     private RemoteLogService remoteLogService;
 
     /**
@@ -24,6 +28,10 @@ public class AsyncLogService
     @Async
     public void saveSysLog(SysOperLog sysOperLog) throws Exception
     {
-        remoteLogService.saveLog(sysOperLog, SecurityConstants.INNER);
+        if (remoteLogService != null) {
+            remoteLogService.saveLog(sysOperLog, SecurityConstants.INNER);
+        } else {
+            log.warn("RemoteLogService未配置，操作日志将不被远程保存: {}", sysOperLog);
+        }
     }
 }

@@ -1,6 +1,8 @@
-package com.match.file.service;
+package com.match.file.service.impl;
 
 import java.io.InputStream;
+
+import com.match.file.service.ISysFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,7 @@ public class MinioSysFileServiceImpl implements ISysFileService
         {
             // 确保存储桶有正确的访问策略
             setBucketPolicy();
-            
+
             String fileName = FileUploadUtils.extractFilename(file);
             inputStream = file.getInputStream();
             PutObjectArgs args = PutObjectArgs.builder()
@@ -93,7 +95,7 @@ public class MinioSysFileServiceImpl implements ISysFileService
                 "        }\n" +
                 "    ]\n" +
                 "}";
-        
+
         client.setBucketPolicy(SetBucketPolicyArgs.builder()
                 .bucket(minioConfig.getBucketName())
                 .config(policy)

@@ -19,6 +19,7 @@
         <module>match-common-datascope</module>
         <module>match-common-datasource</module>
         <module>match-common-json</module>
+        <module>match-common-oss</module>
     </modules>
 
     <artifactId>match-common</artifactId>

@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>match-email</artifactId>
+    <artifactId>match-modules-email</artifactId>
 
     <description>
         match-email邮件模块
