@@ -304,8 +304,10 @@ public class OssClient {
      * @throws Exception
      */
     public String initiateMultipartUpload(String objectKey)  {
+        System.out.println("[initiateMultipartUpload] objectKey = " + objectKey);
         InitiateMultipartUploadRequest initRequest = new InitiateMultipartUploadRequest(properties.getBucketName(), objectKey);
         InitiateMultipartUploadResult initResponse = client.initiateMultipartUpload(initRequest);
+        System.out.println("[initiateMultipartUpload] uploadId = " + initResponse.getUploadId());
         return initResponse.getUploadId();
     }
 
@@ -317,12 +319,16 @@ public class OssClient {
      * @return
      */
     public String getPresignedUrlForPartUpload(String objectKey, String uploadId, int partNumber) {
+        System.out.println("[getPresignedUrlForPartUpload] objectKey = " + objectKey + ", uploadId = " + uploadId + ", partNumber = " + partNumber);
         GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(properties.getBucketName(), objectKey)
             .withMethod(HttpMethod.PUT)
             .withExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)); // 1 day expiry
         urlRequest.addRequestParameter("uploadId", uploadId);
         urlRequest.addRequestParameter("partNumber", String.valueOf(partNumber));
-        return client.generatePresignedUrl(urlRequest).toString();
+        // 生成预签名URL并确保返回完整URL
+        URL url = client.generatePresignedUrl(urlRequest);
+        System.out.println("[getPresignedUrlForPartUpload] URL = " + url);
+        return url.toString();
     }
 
     /**
@@ -334,6 +340,7 @@ public class OssClient {
      */
     public List<String> listPresignedUrlForPartUpload(String objectKey, String uploadId, int partSize) {
         List<String> list = new ArrayList<String>();
+        System.out.println("[listPresignedUrlForPartUpload] objectKey = " + objectKey);
         for (int i = 1; i <= partSize; i++) {
             list.add(getPresignedUrlForPartUpload(objectKey, uploadId, i));
         }

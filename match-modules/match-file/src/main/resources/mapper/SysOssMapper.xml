@@ -36,6 +36,12 @@
             <if test="fileName != null and fileName != ''">
                 and file_name like concat('%', #{fileName}, '%')
             </if>
+            <if test="md5 != null and md5 != ''">
+                and md5 = #{md5}
+            </if>
+            <if test="uploadId != null and uploadId != ''">
+                and upload_id = #{uploadId}
+            </if>
             <if test="originalName != null and originalName != ''">
                 and original_name like concat('%', #{originalName}, '%')
             </if>

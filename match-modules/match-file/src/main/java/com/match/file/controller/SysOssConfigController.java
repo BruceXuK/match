@@ -25,7 +25,7 @@ import java.util.List;
  * @date 2021-08-13
  */
 @RestController
-@RequestMapping("/system/oss/config")
+@RequestMapping("/file/oss/config")
 public class SysOssConfigController extends BaseController {
 
     @Autowired

@@ -269,6 +269,7 @@ public class SysOssServiceImpl implements ISysOssService
     @Override
     public List<String> listPresignedUrlForPartUpload(String objectKey, String uploadId, int partSize) {
         OssClient storage = OssFactory.instance();
+        System.out.println("[listPresignedUrlForPartUpload] objectKey = " + objectKey);
         return storage.listPresignedUrlForPartUpload(objectKey, uploadId, partSize);
     }
 
@@ -297,17 +298,16 @@ public class SysOssServiceImpl implements ISysOssService
     @Override
     public OssLargeResult initUploadLargeFile(String objectKey, String md5) throws Exception {
         // 1. 校验md5是否已经存在，如果存在，则不用上传，直接返回已完成状态
-        // 手动实现查询逻辑
+        // 判断文件是否存在
         SysOss queryOss = new SysOss();
         queryOss.setMd5(md5);
         queryOss.setUploadStatus(OssConstants.FINISH_UPLOAD);
         List<SysOss> sysOssList = sysOssMapper.selectSysOssList(queryOss);
-
         if (!CollectionUtils.isEmpty(sysOssList)) {
-            SysOss oss = sysOssList.get(0);
-            return OssLargeResult.builder().ossId(oss.getOssId()).uploadStatus(OssConstants.FINISH_UPLOAD).build();
+            SysOss ossRes = sysOssList.get(0);
+            return OssLargeResult.builder().ossId(ossRes.getOssId()).uploadStatus(OssConstants.FINISH_UPLOAD).build();
         }
-
+        //不存在则执行
         // 获取文件名
         List<String> filePathList = StringUtils.splitList(objectKey, StrUtil.SLASH);
         String fileName = filePathList.get(filePathList.size() - 1);
@@ -361,6 +361,7 @@ public class SysOssServiceImpl implements ISysOssService
 
         // 生成新文件名，避免重名
         String uuid = IdUtil.simpleUUID();
+        System.out.println("[initUploadLargeFile] uuid = " + uuid);
         String newFileName =  uuid + suffix;
 
         if (!CollectionUtils.isEmpty(filePathList)) {
@@ -385,6 +386,7 @@ public class SysOssServiceImpl implements ISysOssService
         oss.setService(storage.getConfigKey());
         oss.setUploadId(uploadId);
         oss.setMd5(md5);
+        System.out.println("[initUploadLargeFile] MD5 = " + md5);
         oss.setUploadStatus(OssConstants.WAIT_UPLOAD);
         oss.setUrl(storage.getUrl() + StrUtil.SLASH + newFileNameWithSavePath);
         sysOssMapper.insertSysOss(oss);
@@ -399,13 +401,11 @@ public class SysOssServiceImpl implements ISysOssService
         Assert.notNull(oss, "文件初始化信息失败！");
         List<String> urlList = listPresignedUrlForPartUpload(oss.getFileName(), uploadId, partSize);
 
-        OssClient storage = OssFactory.instance();
-        String minioPrefix = storage.getMinioPrefix();
+        // 确保返回完整的预签名URL，不移除MinIO前缀
         Map<String, String> map = new HashMap<>();
         for (int i = 0; i < urlList.size(); i++) {
             String url = urlList.get(i);
-            String noPrefixUrl =  url.replace(minioPrefix, "");
-            map.put("chunk_" + i, noPrefixUrl);
+            map.put("chunk_" + i, url);
         }
         return map;
     }

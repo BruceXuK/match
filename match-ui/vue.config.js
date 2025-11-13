@@ -39,7 +39,8 @@ module.exports = {
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
-      }
+      },
+      // 注意：移除了OSS_API的代理配置，让预签名URL直接访问MinIO服务器
     },
     disableHostCheck: true
   },
