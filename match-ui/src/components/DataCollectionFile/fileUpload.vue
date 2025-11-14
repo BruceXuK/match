@@ -204,14 +204,26 @@ export default {
       largeFileInit(this.fileParams).then(async (res) => {
         console.log("largeFileInit", res);
         if (res.code === 200) {
-          this.$emit("uploadSuccess", {
-            ossId: res.data.ossId,
-            fileName: file.name,
-            fileSize: file.size,
-          });
           if (res.data.uploadStatus === "finish_upload") {
+            // 文件已经上传过了
+            this.$emit("uploadSuccess", {
+              ossId: res.data.ossId,
+              fileName: file.name,
+              fileSize: file.size,
+            });
+            this.$emit("fileExists");
+            // 延迟触发uploadFinish事件，确保提示信息有足够时间显示
+            setTimeout(() => {
+              this.$emit("uploadFinish");
+              this.fileList = [];
+            }, 1000);
             return;
           } else {
+            this.$emit("uploadSuccess", {
+              ossId: res.data.ossId,
+              fileName: file.name,
+              fileSize: file.size,
+            });
             let urlObj = {
               objectKey: res.data.fileName || file.name,
               uploadId: res.data.uploadId,
@@ -232,8 +244,9 @@ export default {
                   arrNew.push(object);
                 }
                 console.log("arrNew", arrNew);
-                let progress = 0;
-                const allArrNew = arrNew.map(async (item) => {
+                // 逐个上传分片并更新进度
+                for (let i = 0; i < arrNew.length; i++) {
+                  const item = arrNew[i];
                   // 分片开始位置
                   const start = (item.partNumber - 1) * this.chunkSize;
                   // 分片结束位置
@@ -241,14 +254,16 @@ export default {
                   // 取文件指定范围内的byte，从而得到分片数据
                   const chunkFile = file.slice(start, end);
                   await this.$http.put(item.uploadUrl, chunkFile);
-                  progress++;
-                  this.schedule = parseFloat(
-                    ((progress / urlObj.partSize) * 100)
-                      .toString()
-                      .substring(0, 4)
-                  );
-                });
-                await Promise.all(allArrNew);
+                  
+                  // 更新进度条
+                  // 使用setTimeout确保进度条流畅更新
+                  await new Promise(resolve => {
+                    setTimeout(() => {
+                      this.schedule = Math.floor(((i + 1) / urlObj.partSize) * 100);
+                      resolve();
+                    }, 0);
+                  });
+                }
                 // 第三步进行切片合并
                 mergeFile(urlObj).then((con) => {
                   if (con.code === 200) {

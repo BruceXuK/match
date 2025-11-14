@@ -78,6 +78,13 @@ public interface ISysOssService {
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 
     /**
+     * 更新OSS对象信息
+     * @param oss OSS对象信息
+     * @return 更新结果
+     */
+    int updateOss(SysOss oss);
+
+    /**
      * 上传KB类型文件
      * @param file MultipartFile文件对象
      * @return 上传后的文件信息

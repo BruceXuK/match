@@ -166,4 +166,16 @@ public class SysOssController extends BaseController {
         return R.ok();
     }
 
+    /**
+     * 修改OSS对象存储
+     *
+     * @param oss OSS对象信息
+     */
+    @RequiresPermissions("system:oss:edit")
+    @Log(title = "OSS对象存储", businessType = BusinessType.UPDATE)
+    @PutMapping()
+    public AjaxResult edit(@RequestBody SysOss oss) {
+        return toAjax(iSysOssService.updateOss(oss));
+    }
+
 }

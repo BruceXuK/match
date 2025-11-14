@@ -204,6 +204,11 @@ public class SysOssServiceImpl implements ISysOssService
         return sysOssMapper.deleteSysOssByIds(idArray) > 0;
     }
 
+    @Override
+    public int updateOss(SysOss oss) {
+        return sysOssMapper.updateSysOss(oss);
+    }
+
 
     @Override
     public SysOss uploadKbFile(MultipartFile file) {
